@@ -61,6 +61,34 @@ class ShopItemFragment : Fragment() {
         observeViewModel()
     }
 
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+    }
+
     private fun observeViewModel() {
         viewModel.errorInputCount.observe(viewLifecycleOwner) {
             val message = if (it) {
