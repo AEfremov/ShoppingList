@@ -1,5 +1,7 @@
 package ru.efremov.shoppinglist.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,9 +11,9 @@ import ru.efremov.shoppinglist.domain.EditShopItemUseCase
 import ru.efremov.shoppinglist.domain.GetShopItemUseCase
 import ru.efremov.shoppinglist.domain.ShopItem
 
-class ShopItemViewModel : ViewModel() {
+class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = ShopListRepositoryImpl
+    private val repository = ShopListRepositoryImpl(application)
 
     private val getShopItemUserCase = GetShopItemUseCase(repository)
     private val addShopItemUserCase = AddShopItemUseCase(repository)
