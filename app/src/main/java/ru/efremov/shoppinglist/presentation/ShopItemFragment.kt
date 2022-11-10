@@ -9,14 +9,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import ru.efremov.shoppinglist.ShoppingListApp
 import ru.efremov.shoppinglist.databinding.FragmentShopItemBinding
 import ru.efremov.shoppinglist.domain.ShopItem
+import javax.inject.Inject
 
 class ShopItemFragment : Fragment() {
 
     private var _binding: FragmentShopItemBinding? = null
     private val binding: FragmentShopItemBinding
         get() = _binding ?: throw RuntimeException("FragmentShopItemBinding == null")
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as ShoppingListApp).component
+    }
 
     private lateinit var viewModel: ShopItemViewModel
 
@@ -26,6 +35,7 @@ class ShopItemFragment : Fragment() {
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
     override fun onAttach(context: Context) {
+        component.inject(this)
         super.onAttach(context)
         if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
@@ -50,7 +60,7 @@ class ShopItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         addTextChangedListeners()
