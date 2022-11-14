@@ -2,6 +2,7 @@ package ru.efremov.shoppinglist.presentation
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -14,7 +15,9 @@ import ru.efremov.shoppinglist.R
 import ru.efremov.shoppinglist.ShoppingListApp
 import ru.efremov.shoppinglist.databinding.ActivityMainBinding
 import ru.efremov.shoppinglist.di.ApplicationComponent
+import ru.efremov.shoppinglist.domain.ShopItem
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
@@ -52,13 +55,33 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             }
         }
 
-        contentResolver.query(
-            Uri.parse("content://ru.efremov.shoppinglist/shop_items"),
-            null,
-            null,
-            null,
-            null
-        )
+        thread {
+            val cursor = contentResolver.query(
+                Uri.parse("content://ru.efremov.shoppinglist/shop_items"),
+                null,
+                null,
+                null,
+                null
+            )
+            while (cursor?.moveToNext() == true) {
+//                Log.d("MainActivity", "Cursor: ${cursor.columnCount}")
+//                for (name in cursor.columnNames) {
+//                    Log.d("MainActivity", name)
+//                }
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                val count = cursor.getInt(cursor.getColumnIndexOrThrow("count"))
+                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0
+                val shopItem = ShopItem(
+                    id = id,
+                    name = name,
+                    count = count,
+                    enabled = enabled
+                )
+                Log.d("MainActivity", shopItem.toString())
+            }
+            cursor?.close()
+        }
     }
 
     override fun onEditingFinished() {
